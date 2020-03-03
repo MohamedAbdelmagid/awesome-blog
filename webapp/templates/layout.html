@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="">
+	<meta name="author" content="">
+
+	{% block title %}
+		{% if title %}
+			<title>{{ title }} - Awesome Blog</title>
+		{% else %}
+			<title>Awesome Blog</title>
+		{% endif %}
+	{% endblock title %}
+
+
+	<!-- Bootstrap core CSS -->
+	<link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+
+	<!-- Custom styles for this template -->
+	<link href="{{ url_for('static', filename='css/blog-home.css') }}" rel="stylesheet">
+
+</head>
+
+<body>
+
+	<!-- Navigation -->
+	{% block navbar %}
+		<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+			<div class="container">
+				<a class="navbar-brand mr-4" href="/">Awesome Blog</a>
+
+				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
+					aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+
+				<div class="collapse navbar-collapse" id="navbarResponsive">
+					<ul class="navbar-nav ml-auto">
+						<li class="nav-item">
+							<a class="nav-link" href="/">Home</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="/about">About</a>
+						</li>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</nav>
+	{% endblock navbar %}
+	
+	<!-- Page Content -->
+	{% block all_content %}
+		<div class="container">
+
+			<div class="row">
+
+				<!-- Blog Entries Column -->
+				<div class="col-md-8">
+					{# application content needs to be provided in the app_content block #}
+					{% block content %}
+					{% endblock %}
+				</div>
+				
+				<!-- Sidebar Widgets Column -->
+				<div class="col-md-4">
+					<!-- Side Widget For Advertisement-->
+					<div class="card my-4">
+						<h5 class="card-header">Advertisement</h5>
+						<div class="card-body">
+							Free area for advertisement, you can put anything you want inside of 
+							this side widgets. If you are interested you can contact us at 
+							mohamed.abdelmagid.1991@gmail.com !
+						</div>
+					</div>
+				</div>
+
+			</div>
+			<!-- /.row -->
+
+		</div>
+		<!-- /.container -->
+	{% endblock all_content %}
+
+	<!-- Footer -->
+	<footer class="py-5 bg-dark">
+		<div class="container">
+			<p class="m-0 text-center text-white">Copyright &copy; mohamed.abdelmagid.1991@gmail.com</p>
+		</div>
+		<!-- /.container -->
+	</footer>
+
+	{% block scripts %}
+		<!-- Bootstrap core JavaScript -->
+		<script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+	{% endblock scripts %}
+
+</body>
+
+</html>
