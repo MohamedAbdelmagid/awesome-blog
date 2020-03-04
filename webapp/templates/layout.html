@@ -29,9 +29,9 @@
 
 	<!-- Navigation -->
 	{% block navbar %}
-		<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+		<nav class="navbar fix-bottom navbar-expand-lg navbar-info bg-info fixed-top">
 			<div class="container">
-				<a class="navbar-brand mr-4" href="/">Awesome Blog</a>
+				<a class="navbar-brand mr-4 text-white" href="/"><h3>Awesome Blog</h3></a>
 
 				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
 					aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
@@ -41,10 +41,13 @@
 				<div class="collapse navbar-collapse" id="navbarResponsive">
 					<ul class="navbar-nav ml-auto">
 						<li class="nav-item">
-							<a class="nav-link" href="/">Home</a>
+							<a class="nav-link text-white" href="{{ url_for('home') }}">Home</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" href="/about">About</a>
+							<a class="nav-link text-white" href="{{ url_for('about') }}">About</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link text-white" href="{{ url_for('login') }}">Login</a>
 						</li>
 						</li>
 					</ul>
@@ -61,6 +64,16 @@
 
 				<!-- Blog Entries Column -->
 				<div class="col-md-8">
+					{% with messages = get_flashed_messages(with_categories=true) %}
+						{% if messages %}
+							{% for category, message in messages %}
+								<div class="alert alert-{{ category }}" role="alert">
+									{{ message }}
+								</div>
+							{% endfor %}
+						{% endif %}
+					{% endwith %}
+
 					{# application content needs to be provided in the app_content block #}
 					{% block content %}
 					{% endblock %}
@@ -85,14 +98,6 @@
 		</div>
 		<!-- /.container -->
 	{% endblock all_content %}
-
-	<!-- Footer -->
-	<footer class="py-5 bg-dark">
-		<div class="container">
-			<p class="m-0 text-center text-white">Copyright &copy; mohamed.abdelmagid.1991@gmail.com</p>
-		</div>
-		<!-- /.container -->
-	</footer>
 
 	{% block scripts %}
 		<!-- Bootstrap core JavaScript -->

@@ -1,5 +1,7 @@
-from flask import render_template
+from flask import render_template, flash, redirect, url_for
+
 from webapp import app
+from webapp.forms import LoginForm, RegistrationForm
 
 
 @app.route('/')
@@ -22,7 +24,28 @@ def home():
 ]
     return render_template('home.html', user=user, posts=posts)
 
+
 @app.route("/about")
 def about():
     return render_template('about.html', title='About')
 
+
+@app.route("/register", methods=['GET', 'POST'])
+def register():
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        flash(f'Now you have an account with username {form.username.data}!', 'info')
+        return redirect(url_for('home'))
+    return render_template('register.html', title='Register', form=form)
+
+
+@app.route("/login", methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        if form.email.data == 'admin@awesomeblog.com' and form.password.data == 'admin':
+            flash('You have been logged in!', 'info')
+            return redirect(url_for('home'))
+        else:
+            flash('Some thing wrong with your credential. Please check username and password', 'danger')
+    return render_template('login.html', title='Login', form=form)

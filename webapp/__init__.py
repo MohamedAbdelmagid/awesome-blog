@@ -9,5 +9,6 @@ load_dotenv(os.path.join(basedir, '.env'))
 
 app = Flask(__name__)
 app.config.from_object(os.environ.get('APP_SETTINGS'))
+print(os.environ.get('APP_SETTINGS'))
 
 from webapp import routes
