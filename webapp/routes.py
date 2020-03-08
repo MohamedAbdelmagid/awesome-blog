@@ -1,11 +1,16 @@
-from flask import render_template, flash, redirect, url_for
+from werkzeug.urls import url_parse
 
-from webapp import app
+from flask import render_template, flash, redirect, url_for, request
+from flask_login import current_user, login_user, logout_user, login_required
+
+from webapp import app, db
+from webapp.models import User
 from webapp.forms import LoginForm, RegistrationForm
 
 
 @app.route('/')
 @app.route('/home')
+@login_required
 def home():
     user = {'username': 'Mohamed Abdelmagid'}
     posts = [
@@ -21,8 +26,8 @@ def home():
             'content': 'Second post content',
             'date_posted': 'April 21, 2018'
         }
-]
-    return render_template('home.html', user=user, posts=posts)
+    ]
+    return render_template('home.html', title='Home Page', posts=posts)
 
 
 @app.route("/about")
@@ -32,20 +37,48 @@ def about():
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+        
     form = RegistrationForm()
     if form.validate_on_submit():
-        flash(f'Now you have an account with username {form.username.data}!', 'info')
-        return redirect(url_for('home'))
+        user = User(username=form.username.data, email=form.email.data)
+        user.set_password(form.password.data)
+
+        db.session.add(user)
+        db.session.commit()
+
+        flash('Your account has been created! You are now able to log in', 'info')
+        return redirect(url_for('login'))
+
     return render_template('register.html', title='Register', form=form)
+
 
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+
     form = LoginForm()
     if form.validate_on_submit():
-        if form.email.data == 'admin@awesomeblog.com' and form.password.data == 'admin':
-            flash('You have been logged in!', 'info')
-            return redirect(url_for('home'))
+        user = User.query.filter_by(email=form.email.data).first()
+        if user and user.check_password(form.password.data):
+            login_user(user, remember=form.remember_me.data)
+
+            next_page = request.args.get('next')
+            if not next_page or url_parse(next_page).netloc != '':
+                next_page = url_for('home')
+
+            return redirect(next_page)
         else:
-            flash('Some thing wrong with your credential. Please check username and password', 'danger')
-    return render_template('login.html', title='Login', form=form)
+            flash('Invalid username or password !!' , 'danger')
+            return redirect(url_for('login'))
+
+    return render_template('login.html', title='Sign In', form=form)
+
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('home'))

@@ -46,10 +46,15 @@
 						<li class="nav-item">
 							<a class="nav-link text-white" href="{{ url_for('about') }}">About</a>
 						</li>
-						<li class="nav-item">
-							<a class="nav-link text-white" href="{{ url_for('login') }}">Login</a>
-						</li>
-						</li>
+						{% if current_user.is_anonymous %}
+							<li class="nav-item">
+								<a class="nav-link text-white" href="{{ url_for('login') }}">Login</a>
+							</li>
+						{% else %}
+							<li class="nav-item">
+								<a class="nav-link text-white" href="{{ url_for('logout') }}">Logout</a>
+							</li>
+						{% endif %}
 					</ul>
 				</div>
 			</div>
@@ -64,10 +69,10 @@
 
 				<!-- Blog Entries Column -->
 				<div class="col-md-8">
-					{% with messages = get_flashed_messages(with_categories=true) %}
+					{% with messages = get_flashed_messages() %}
 						{% if messages %}
-							{% for category, message in messages %}
-								<div class="alert alert-{{ category }}" role="alert">
+							{% for message in messages %}
+								<div class="alert alert-info" role="alert">
 									{{ message }}
 								</div>
 							{% endfor %}
