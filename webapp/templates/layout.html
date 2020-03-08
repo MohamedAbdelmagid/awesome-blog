@@ -5,8 +5,13 @@
 
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<meta name="description" content="">
-	<meta name="author" content="">
+
+	<!-- Bootstrap core CSS -->
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}">
+	
+	<!-- Custom styles for this template -->
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/custom.css') }}">
+
 
 	{% block title %}
 		{% if title %}
@@ -16,50 +21,42 @@
 		{% endif %}
 	{% endblock title %}
 
-
-	<!-- Bootstrap core CSS -->
-	<link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
-
-	<!-- Custom styles for this template -->
-	<link href="{{ url_for('static', filename='css/blog-home.css') }}" rel="stylesheet">
-
 </head>
 
 <body>
 
-	<!-- Navigation -->
-	{% block navbar %}
-		<nav class="navbar fix-bottom navbar-expand-lg navbar-info bg-info fixed-top">
-			<div class="container">
-				<a class="navbar-brand mr-4 text-white" href="/"><h3>Awesome Blog</h3></a>
+	<header class="site-header">
+		<!-- Navigation -->
+		{% block navbar %}
+			<nav class="navbar navbar-expand-lg navbar-dark bg-info fixed-top">
+				<div class="container">
+					<a class="navbar-brand mr-4 text-white" href="/"><h3>Awesome Blog</h3></a>
 
-				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
-					aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-					<span class="navbar-toggler-icon"></span>
-				</button>
+					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
+						aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+						<span class="navbar-toggler-icon"></span>
+					</button>
 
-				<div class="collapse navbar-collapse" id="navbarResponsive">
-					<ul class="navbar-nav ml-auto">
-						<li class="nav-item">
-							<a class="nav-link text-white" href="{{ url_for('home') }}">Home</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link text-white" href="{{ url_for('about') }}">About</a>
-						</li>
-						{% if current_user.is_anonymous %}
-							<li class="nav-item">
-								<a class="nav-link text-white" href="{{ url_for('login') }}">Login</a>
-							</li>
-						{% else %}
-							<li class="nav-item">
-								<a class="nav-link text-white" href="{{ url_for('logout') }}">Logout</a>
-							</li>
-						{% endif %}
-					</ul>
+					<div class="collapse navbar-collapse" id="navbarResponsive">
+						<div class="navbar-nav mr-auto">
+							<a class="nav-item nav-link text-white" href="{{ url_for('home') }}">Home</a>
+							<a class="nav-item nav-link text-white" href="{{ url_for('about') }}">About</a>
+						</div>
+						<!-- Navbar Right Side -->
+						<div class="navbar-nav">
+							{% if current_user.is_authenticated %}
+								<a class="nav-item nav-link text-white" href="{{ url_for('profile') }}">Profile</a>
+								<a class="nav-item nav-link text-white" href="{{ url_for('logout') }}">Logout</a>
+							{% else %}
+								<a class="nav-item nav-link text-white" href="{{ url_for('login') }}">Login</a>
+								<a class="nav-item nav-link text-white" href="{{ url_for('register') }}">Register</a>
+							{% endif %}
+						</div>
+					</div>
 				</div>
-			</div>
-		</nav>
-	{% endblock navbar %}
+			</nav>
+		{% endblock navbar %}
+	</header>
 	
 	<!-- Page Content -->
 	{% block all_content %}
@@ -108,6 +105,7 @@
 		<!-- Bootstrap core JavaScript -->
 		<script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
 		<script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+		
 	{% endblock scripts %}
 
 </body>

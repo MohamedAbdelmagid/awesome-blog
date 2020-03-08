@@ -5,7 +5,8 @@ from flask_login import current_user, login_user, logout_user, login_required
 
 from webapp import app, db
 from webapp.models import User
-from webapp.forms import LoginForm, RegistrationForm
+from webapp.utils import store_image
+from webapp.forms import LoginForm, RegistrationForm, UpdateProfileForm
 
 
 @app.route('/')
@@ -35,6 +36,30 @@ def about():
     return render_template('about.html', title='About')
 
 
+@app.route("/profile", methods=['GET', 'POST'])
+@login_required
+def profile():
+    form = UpdateProfileForm()
+    if form.validate_on_submit():
+        if form.picture.data:
+            image_file = store_image(form.picture.data)
+            current_user.image_file = image_file
+             
+        current_user.username = form.username.data
+        current_user.email = form.email.data
+
+        db.session.commit()
+        flash('Your profile has been updated !', 'info')
+        return redirect(url_for('profile'))
+
+    elif request.method == 'GET':
+        form.username.data = current_user.username
+        form.email.data = current_user.email
+
+    image_file = url_for('static', filename='pics/' + current_user.image_file)
+    return render_template('profile.html', title='Profile', image_file=image_file, form=form)
+
+
 @app.route("/register", methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
@@ -52,7 +77,6 @@ def register():
         return redirect(url_for('login'))
 
     return render_template('register.html', title='Register', form=form)
-
 
 
 @app.route("/login", methods=['GET', 'POST'])
