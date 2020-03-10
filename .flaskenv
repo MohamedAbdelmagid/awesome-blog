@@ -1,2 +1,1 @@
 FLASK_APP=awesomeBlog.py
-FLASK_DEBUG=1
