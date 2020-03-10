@@ -17,6 +17,17 @@ body {
   box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 
+form textarea {
+  width: 100%;
+  font-family: Lato;
+  font-size: 18px;
+  padding: 12px 20px;
+  box-sizing: border-box;
+  border: none;
+  background-color: #F3F6F6;
+  margin-bottom: 10px;
+}
+
 .bg-cyan {
   background-color: #008B8B;
 }

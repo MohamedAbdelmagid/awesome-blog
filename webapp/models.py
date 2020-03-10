@@ -18,6 +18,9 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(120), index=True, unique=True, nullable=False)
     image_file = db.Column(db.String(20), nullable=False, default='default.png')
     password_hash = db.Column(db.String(128))
+
+    about_me = db.Column(db.String(140))
+    last_seen = db.Column(db.DateTime, default=datetime.utcnow)
     
     posts = db.relationship('Post', backref='author', lazy='dynamic')
 
@@ -30,6 +33,8 @@ class User(UserMixin, db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+
 class Post(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)

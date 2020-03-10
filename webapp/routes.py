@@ -1,3 +1,4 @@
+from datetime import datetime
 from werkzeug.urls import url_parse
 
 from flask import render_template, flash, redirect, url_for, request
@@ -9,25 +10,25 @@ from webapp.utils import store_image
 from webapp.forms import LoginForm, RegistrationForm, UpdateProfileForm
 
 
+posts = [
+    {
+        'author': {'username': 'Mohamed Abdelmagid'},
+        'title': 'Blog Post 1',
+        'content': 'First post content',
+        'date_posted': 'April 20, 2018'
+    },
+    {
+        'author': {'username': 'Ali Mohamed Abdelgadir'},
+        'title': 'Blog Post 2',
+        'content': 'Second post content',
+        'date_posted': 'April 21, 2018'
+    }
+]
+
 @app.route('/')
 @app.route('/home')
 @login_required
 def home():
-    user = {'username': 'Mohamed Abdelmagid'}
-    posts = [
-        {
-            'author': {'username': 'Mohamed Abdelmagid'},
-            'title': 'Blog Post 1',
-            'content': 'First post content',
-            'date_posted': 'April 20, 2018'
-        },
-        {
-            'author': {'username': 'Ali Mohamed Abdelgadir'},
-            'title': 'Blog Post 2',
-            'content': 'Second post content',
-            'date_posted': 'April 21, 2018'
-        }
-    ]
     return render_template('home.html', title='Home Page', posts=posts)
 
 
@@ -36,9 +37,9 @@ def about():
     return render_template('about.html', title='About')
 
 
-@app.route("/profile", methods=['GET', 'POST'])
+@app.route("/edit_profile", methods=['GET', 'POST'])
 @login_required
-def profile():
+def edit_profile():
     form = UpdateProfileForm()
     if form.validate_on_submit():
         if form.picture.data:
@@ -47,17 +48,27 @@ def profile():
              
         current_user.username = form.username.data
         current_user.email = form.email.data
+        current_user.about_me = form.about_me.data
 
         db.session.commit()
         flash('Your profile has been updated !', 'info')
-        return redirect(url_for('profile'))
+        return redirect(url_for('account', username=current_user.username))
 
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.email.data = current_user.email
+        form.about_me.data = current_user.about_me
 
     image_file = url_for('static', filename='pics/' + current_user.image_file)
-    return render_template('profile.html', title='Profile', image_file=image_file, form=form)
+    return render_template('edit_profile.html', title='Edit Profile', image_file=image_file, form=form)
+
+
+@app.route("/account/<username>", methods=['GET', 'POST'])
+@login_required
+def account(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    image_file = url_for('static', filename='pics/' + user.image_file)
+    return render_template('account.html', user=user, image_file=image_file, posts=posts)
 
 
 @app.route("/register", methods=['GET', 'POST'])
@@ -106,3 +117,10 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('home'))
+
+
+@app.before_request
+def before_request():
+    if current_user.is_authenticated:
+        current_user.last_seen = datetime.utcnow()
+        db.session.commit()
