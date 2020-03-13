@@ -63,12 +63,46 @@ def edit_profile():
     return render_template('edit_profile.html', title='Edit Profile', image_file=image_file, form=form)
 
 
-@app.route("/account/<username>", methods=['GET', 'POST'])
+@app.route("/account/<string:username>", methods=['GET', 'POST'])
 @login_required
 def account(username):
     user = User.query.filter_by(username=username).first_or_404()
     image_file = url_for('static', filename='pics/' + user.image_file)
     return render_template('account.html', user=user, image_file=image_file, posts=posts)
+
+@app.route("/follow/<string:username>")
+@login_required
+def follow(username):
+    user = User.query.filter_by(username=username).first()
+    if user:
+        if user == current_user:
+            flash('You cannot follow yourself !!')
+            return redirect(url_for('account', username=username))
+
+        current_user.follow(user)
+        db.session.commit()
+        flash('You are following {}!'.format(username))
+        return redirect(url_for('account', username=username))
+    else:
+        flash('User {} not found.'.format(username))
+        return redirect(url_for('home'))
+
+@app.route("/unfollow/<string:username>")
+@login_required
+def unfollow(username):
+    user = User.query.filter_by(username=username).first()
+    if user:
+        if user == current_user:
+            flash('You cannot unfollow yourself !!')
+            return redirect(url_for('account', username=username))
+
+        current_user.unfollow(user)
+        db.session.commit()
+        flash('You are not following {} anymore !'.format(username))
+        return redirect(url_for('account', username=username))
+    else:
+        flash('User {} not found.'.format(username))
+        return redirect(url_for('home'))
 
 
 @app.route("/register", methods=['GET', 'POST'])
