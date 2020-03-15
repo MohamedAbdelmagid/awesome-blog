@@ -1,21 +1,61 @@
 {% extends 'layout.html' %}
 {% block content %}
-    <h4 class="my-4">Hi
-		<small>, {{ current_user.username }}</small>
-    </h4>
+
+    <!-- Form  -->
+    {% if form %}
+    <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        <fieldset class="form-group">
+
+            <div class="form-group">
+                {% if form.title.errors %}
+                    {{ form.title(class="form-control form-control-lg is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.title.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.title(class="form-control form-control-lg", id="titleArea", rows="1", placeholder="Title") }}
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                {% if form.content.errors %}
+                    {{ form.content(class="form-control form-control-lg is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.content.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.content(class="form-control", id="contentTextArea", rows="7", placeholder="Write your article...") }}
+                {% endif %}
+            </div>
+        </fieldset>
+
+        <div class="form-group">
+            {{ form.submit(class="btn btn-outline-info btn-lg") }}
+        </div>
+    </form>
+    {% endif %}
     
     {% for post in posts %}
-        <!-- Blog Post -->
-        <div class="card mb-4">
-            <div class="card-body">
-              <h2 class="card-title">{{ post.title }}</h2>
-              <p class="card-text">{{ post.content }}</p>
-            </div>
-            <div class="card-footer text-muted">
-              {{ post.date_posted }} by
-              <a href="/"> {{ post.author.username }}</a>
-            </div>
-          </div>
+        {% include '_post.html' %}
     {% endfor %}
+
+    <!-- Pagination -->
+    <ul class="pagination justify-content-center mb-4">
+        {% if prev_url %}
+        <li class="page-item">
+            <a class="page-link" href="{{ prev_url }}">&larr; Older</a>
+        </li>
+        {% endif %}
+        {% if next_url %}
+        <li class="page-item">
+            <a class="page-link" href="{{ next_url }}">More &rarr;</a>
+        </li>
+        {% endif %}
+    </ul>
 
 {% endblock content %}

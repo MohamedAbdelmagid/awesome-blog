@@ -57,7 +57,7 @@ class User(UserMixin, db.Model):
         return Post.query.join(
             followers, (followers.c.followed_id == Post.user_id)).filter(
                 followers.c.follower_id == self.id).order_by(
-                    Post.timestamp.desc())
+                    Post.date_posted.desc())
 
 class Post(db.Model):
 

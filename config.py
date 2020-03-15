@@ -19,6 +19,8 @@ class Config(object):
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     ADMINS = ['mohamed.abdelmagid.1991@gmail.com', 'theblackone.007@hotmail.com']
 
+    POSTS_PER_PAGE = 5
+
 
 class ProductionConfig(Config):
     DEBUG = False

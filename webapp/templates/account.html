@@ -12,7 +12,7 @@
         </div>
         
         <!-- Form  -->
-        <form>
+        <form> 
             <fieldset class="form-group ">
                 <legend class="border-bottom mb-4"><h4>About {{ user.username }}</h4></legend>
                 
@@ -35,12 +35,19 @@
                 </div>
 
                 <div class="form-group row">
+                    <label for="numberOfArticles" class="col-sm-2 col-form-label">Articles</label>
+                    <div class="col-sm-10">
+                      <input type="text" readonly class="form-control-plaintext" value="  {{ articles }}">
+                    </div>
+                </div>
+
+                <div class="form-group row">
                     <label for="numberOfFollowers" class="col-sm-2 col-form-label">Followers</label>
                     <div class="col-sm-10">
                       <input type="text" readonly class="form-control-plaintext" value="  {{ user.followers.count() }}">
                     </div>
                 </div>
-                
+
                 <div class="form-group row">
                     <label for="numberOfFollowed" class="col-sm-2 col-form-label">Following</label>
                     <div class="col-sm-10">
