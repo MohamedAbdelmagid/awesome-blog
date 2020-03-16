@@ -19,33 +19,39 @@ def home():
         post = Post(title=form.title.data, content=form.content.data, author=current_user)
         db.session.add(post)
         db.session.commit()
+
         flash('Your post is now live!')
         return redirect(url_for('home'))
 
     page = request.args.get('page', 1, type=int)
-    posts = current_user.followed_posts().paginate(page, app.config['POSTS_PER_PAGE'], False)
+    followed_posts = current_user.followed_posts()
+    posts = followed_posts.paginate(page, app.config['POSTS_PER_PAGE'], False)
 
     next_url = url_for('home', page=posts.next_num) if posts.has_next else None
     prev_url = url_for('home', page=posts.prev_num) if posts.has_prev else None
 
+    displayPagination = followed_posts.count() > app.config['POSTS_PER_PAGE']
+
     return render_template('home.html', title='Home', form=form,
                            posts=posts.items, next_url=next_url,
-                           prev_url=prev_url)
+                           prev_url=prev_url, display=displayPagination)
 
 @app.route('/explore')
 @login_required
 def explore():
     page = request.args.get('page', 1, type=int)
-    posts = Post.query.order_by(Post.date_posted.desc()).paginate(
-            page, app.config['POSTS_PER_PAGE'], False)
+    all_posts = Post.query.order_by(Post.date_posted.desc())
+    posts = all_posts.paginate(page, app.config['POSTS_PER_PAGE'], False)
 
     next_url = url_for('explore', page=posts.next_num) \
         if posts.has_next else None
     prev_url = url_for('explore', page=posts.prev_num) \
         if posts.has_prev else None
 
+    displayPagination = all_posts.count() > app.config['POSTS_PER_PAGE']
+
     return render_template("home.html", title='Explore', posts=posts.items,
-                          next_url=next_url, prev_url=prev_url)
+                          next_url=next_url, prev_url=prev_url, display=displayPagination)
 
 
 @app.route("/about")
@@ -84,7 +90,9 @@ def edit_profile():
 def account(username):
     user = User.query.filter_by(username=username).first_or_404()
     posts = user.posts.order_by(Post.date_posted.desc()).all()
+    
     image_file = url_for('static', filename='pics/' + user.image_file)
+
     return render_template('account.html', user=user, image_file=image_file, posts=posts, articles=len(posts))
 
 @app.route("/follow/<string:username>")

@@ -45,6 +45,7 @@
     {% endfor %}
 
     <!-- Pagination -->
+    {% if display %}
     <ul class="pagination justify-content-center mb-4">
         <li class="page-item{% if not prev_url %} disabled{% endif %}">
             <a class="page-link" href="{{ prev_url or '#' }}">
@@ -57,5 +58,6 @@
             </a>
         </li>
     </ul>
+    {% endif %}
 
 {% endblock %}
