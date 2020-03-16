@@ -12,7 +12,7 @@
     </div>
 
     <div class="card-footer text-muted">
-        {{ post.date_posted.strftime('%d %B %Y') }} by
+        {{ moment(post.date_posted).fromNow() }} by
         <a href="/account/{{ post.author.username }}"> {{ post.author.username }}</a>
     </div>
 </div>

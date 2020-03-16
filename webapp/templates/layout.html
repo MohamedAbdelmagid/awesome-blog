@@ -1,114 +1,102 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'bootstrap/base.html' %}
 
-<head>
-
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
+{% block head %}
 	<!-- Bootstrap core CSS -->
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}">
 	
 	<!-- Custom styles for this template -->
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/custom.css') }}">
+{% endblock head %}
 
+{% block title %}
+	{% if title %}
+		<title>{{ title }} - Awesome Blog</title>
+	{% else %}
+		<title>Awesome Blog</title>
+	{% endif %}
+{% endblock title %}
 
-	{% block title %}
-		{% if title %}
-			<title>{{ title }} - Awesome Blog</title>
-		{% else %}
-			<title>Awesome Blog</title>
-		{% endif %}
-	{% endblock title %}
+<!-- Navigation -->
+{% block navbar %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-info fixed-top">
+	<div class="container">
+		<a class="navbar-brand mr-4 text-white" href="/"><h3>Awesome Blog</h3></a>
 
-</head>
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
+			aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
 
-<body>
-
-	<header class="site-header">
-		<!-- Navigation -->
-		{% block navbar %}
-			<nav class="navbar navbar-expand-lg navbar-dark bg-info fixed-top">
-				<div class="container">
-					<a class="navbar-brand mr-4 text-white" href="/"><h3>Awesome Blog</h3></a>
-
-					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
-						aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-						<span class="navbar-toggler-icon"></span>
-					</button>
-
-					<div class="collapse navbar-collapse" id="navbarResponsive">
-						<div class="navbar-nav mr-auto">
-							<a class="nav-item nav-link text-white" href="{{ url_for('home') }}">Home</a>
-							<a class="nav-item nav-link text-white" href="{{ url_for('explore') }}">Explore</a>
-							<a class="nav-item nav-link text-white" href="{{ url_for('about') }}">About</a>
-						</div>
-						<!-- Navbar Right Side -->
-						<div class="navbar-nav">
-							{% if current_user.is_anonymous %}
-								<a class="nav-item nav-link text-white" href="{{ url_for('login') }}">Login</a>
-								<a class="nav-item nav-link text-white" href="{{ url_for('register') }}">Register</a>
-							{% else %}
-								<a class="nav-item nav-link text-white" href="{{ url_for('account', username=current_user.username) }}">Profile</a>
-								<a class="nav-item nav-link text-white" href="{{ url_for('logout') }}">Logout</a>
-							{% endif %}
-						</div>
-					</div>
-				</div>
-			</nav>
-		{% endblock navbar %}
-	</header>
-	
-	<!-- Page Content -->
-	{% block all_content %}
-		<div class="container">
-
-			<div class="row">
-
-				<!-- Blog Entries Column -->
-				<div class="col-md-8">
-					{% with messages = get_flashed_messages() %}
-						{% if messages %}
-							{% for message in messages %}
-								<div class="alert alert-info" role="alert">
-									{{ message }}
-								</div>
-							{% endfor %}
-						{% endif %}
-					{% endwith %}
-
-					{# application content needs to be provided in the app_content block #}
-					{% block content %}
-					{% endblock %}
-				</div>
-				
-				<!-- Sidebar Widgets Column -->
-				<div class="col-md-4">
-					<!-- Side Widget For Advertisement-->
-					<div class="card my-4">
-						<h5 class="card-header">Advertisement</h5>
-						<div class="card-body">
-							Free area for advertisement, you can put anything you want inside of 
-							this side widgets. If you are interested you can contact us at 
-							mohamed.abdelmagid.1991@gmail.com !
-						</div>
-					</div>
-				</div>
-
+		<div class="collapse navbar-collapse" id="navbarResponsive">
+			<div class="navbar-nav mr-auto">
+				<a class="nav-item nav-link text-white" href="{{ url_for('home') }}">Home</a>
+				<a class="nav-item nav-link text-white" href="{{ url_for('explore') }}">Explore</a>
+				<a class="nav-item nav-link text-white" href="{{ url_for('about') }}">About</a>
 			</div>
-			<!-- /.row -->
+			<!-- Navbar Right Side -->
+			<div class="navbar-nav">
+				{% if current_user.is_anonymous %}
+					<a class="nav-item nav-link text-white" href="{{ url_for('login') }}">Login</a>
+					<a class="nav-item nav-link text-white" href="{{ url_for('register') }}">Register</a>
+				{% else %}
+					<a class="nav-item nav-link text-white" href="{{ url_for('account', username=current_user.username) }}">Profile</a>
+					<a class="nav-item nav-link text-white" href="{{ url_for('logout') }}">Logout</a>
+				{% endif %}
+			</div>
+		</div>
+	</div>
+</nav>
+{% endblock navbar %}
+
+
+<!-- Page Content -->
+{% block content %}
+	<div class="container">
+
+		<div class="row">
+
+			<!-- Blog Entries Column -->
+			<div class="col-md-8">
+				{% with messages = get_flashed_messages() %}
+					{% if messages %}
+						{% for message in messages %}
+							<div class="alert alert-info" role="alert">
+								{{ message }}
+							</div>
+						{% endfor %}
+					{% endif %}
+				{% endwith %}
+
+				{# application content needs to be provided in the app_content block #}
+				{% block app_content %}
+				{% endblock %}
+			</div>
+			
+			<!-- Sidebar Widgets Column -->
+			<div class="col-md-4">
+				<!-- Side Widget For Advertisement-->
+				<div class="card my-4">
+					<h5 class="card-header">Advertisement</h5>
+					<div class="card-body">
+						Free area for advertisement, you can put anything you want inside of 
+						this side widgets. If you are interested you can contact us at 
+						mohamed.abdelmagid.1991@gmail.com !
+					</div>
+				</div>
+			</div>
 
 		</div>
-		<!-- /.container -->
-	{% endblock all_content %}
+		<!-- /.row -->
 
-	{% block scripts %}
-		<!-- Bootstrap core JavaScript -->
-		<script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
-		<script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-		
-	{% endblock scripts %}
+	</div>
+	<!-- /.container -->
+{% endblock %}
 
-</body>
+{% block scripts %}
+	{{ super() }}
+	{{ moment.include_moment() }}
 
-</html>
+	<!-- Bootstrap core JavaScript -->
+	<script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
+	<script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>		
+{% endblock %}

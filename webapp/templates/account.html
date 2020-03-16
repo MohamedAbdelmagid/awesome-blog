@@ -1,12 +1,12 @@
 {% extends "layout.html" %}
-{% block content %}
+{% block app_content %}
     <div class="content-section">
         <div class="media">
             <img class="rounded-circle account-img" src="{{ image_file }}">
             <div class="media-body">
                 <h3 class="account-heading">{{ user.username }}</h3>
                 {% if user.last_seen %}
-                    <p class="text-secondary"><h6>Last seen on:</h6> {{ user.last_seen }}</p>
+                    <p class="text-secondary"><h6>Last seen </h6> {{ moment(user.last_seen).fromNow() }}</p>
                 {% endif %}
             </div>
         </div>
@@ -77,4 +77,4 @@
         {% endfor %}
 
     </div>
-{% endblock content %}
+{% endblock %}
