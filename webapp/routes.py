@@ -1,12 +1,13 @@
 from datetime import datetime
 from werkzeug.urls import url_parse
 
-from flask import render_template, flash, redirect, url_for, request
+from flask import render_template, flash, redirect, url_for, request, jsonify
 from flask_login import current_user, login_user, logout_user, login_required
+from guess_language import guess_language
 
 from webapp import app, db
 from webapp.models import User, Post
-from webapp.utils import store_image, send_password_reset_email
+from webapp.utils import store_image, send_password_reset_email, translate, translate_with_google
 from webapp.forms import LoginForm, RegistrationForm, UpdateProfileForm, PostForm, ResetPasswordForm, ResetPasswordRequestForm
 
 
@@ -16,7 +17,11 @@ from webapp.forms import LoginForm, RegistrationForm, UpdateProfileForm, PostFor
 def home():
     form = PostForm()
     if form.validate_on_submit():
-        post = Post(title=form.title.data, content=form.content.data, author=current_user)
+        language = guess_language(form.content.data)
+        if language == 'UNKNOWN' or len(language) > 5:
+            language = ''
+
+        post = Post(title=form.title.data, content=form.content.data, author=current_user, language=language)
         db.session.add(post)
         db.session.commit()
 
@@ -90,7 +95,7 @@ def edit_profile():
 def account(username):
     user = User.query.filter_by(username=username).first_or_404()
     posts = user.posts.order_by(Post.date_posted.desc()).all()
-    
+
     image_file = url_for('static', filename='pics/' + user.image_file)
 
     return render_template('account.html', user=user, image_file=image_file, posts=posts, articles=len(posts))
@@ -219,3 +224,17 @@ def before_request():
     if current_user.is_authenticated:
         current_user.last_seen = datetime.utcnow()
         db.session.commit()
+
+@app.route('/translate', methods=['POST'])
+@login_required
+def translate_text():
+    text = request.form['text']
+    source_language = request.form['source_language']
+    dest_language = request.form['dest_language']
+    
+    translatedText = translate(text, source_language, dest_language)
+    if 'ArgumentException' in translatedText or 'Exception' in translatedText:
+        # We could use translate_with_google if there is a problem with Microsoft API
+        translatedText = translate_with_google(text, source_language, dest_language)
+    
+    return jsonify({'text': translatedText})

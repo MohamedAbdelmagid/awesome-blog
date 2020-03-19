@@ -7,9 +7,22 @@
         </div>
     </article>
 
-    <div class="card-body pt-0">
+    <div id="post{{ post.id }}" class="card-body pt-0">
         <p class="card-text">{{ post.content }}</p>
     </div>
+    {% if post.language and post.language != 'ar' %}
+    <div class="card-body pt-0" id="translation{{ post.id }}">
+        <p class="card-text">
+            <a href="javascript:translate(
+                '#post{{ post.id }}',
+                '#translation{{ post.id }}',
+                '{{ post.language }}',
+                'ar');" 
+
+            >Translate</a>
+        </p>
+    </div>
+    {% endif %}
 
     <div class="card-footer text-muted">
         {{ moment(post.date_posted).fromNow() }} by
