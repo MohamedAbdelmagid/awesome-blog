@@ -29,18 +29,18 @@
 
 		<div class="collapse navbar-collapse" id="navbarResponsive">
 			<div class="navbar-nav mr-auto">
-				<a class="nav-item nav-link text-white" href="{{ url_for('home') }}">Home</a>
-				<a class="nav-item nav-link text-white" href="{{ url_for('explore') }}">Explore</a>
-				<a class="nav-item nav-link text-white" href="{{ url_for('about') }}">About</a>
+				<a class="nav-item nav-link text-white" href="{{ url_for('main.home') }}">Home</a>
+				<a class="nav-item nav-link text-white" href="{{ url_for('main.explore') }}">Explore</a>
+				<a class="nav-item nav-link text-white" href="{{ url_for('main.about') }}">About</a>
 			</div>
 			<!-- Navbar Right Side -->
 			<div class="navbar-nav">
 				{% if current_user.is_anonymous %}
-					<a class="nav-item nav-link text-white" href="{{ url_for('login') }}">Login</a>
-					<a class="nav-item nav-link text-white" href="{{ url_for('register') }}">Register</a>
+					<a class="nav-item nav-link text-white" href="{{ url_for('auth.lgoin') }}">Login</a>
+					<a class="nav-item nav-link text-white" href="{{ url_for('auth.register') }}">Register</a>
 				{% else %}
-					<a class="nav-item nav-link text-white" href="{{ url_for('account', username=current_user.username) }}">Profile</a>
-					<a class="nav-item nav-link text-white" href="{{ url_for('logout') }}">Logout</a>
+					<a class="nav-item nav-link text-white" href="{{ url_for('main.account', username=current_user.username) }}">Profile</a>
+					<a class="nav-item nav-link text-white" href="{{ url_for('auth.logout') }}">Logout</a>
 				{% endif %}
 			</div>
 		</div>
