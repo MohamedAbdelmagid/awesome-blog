@@ -1,6 +1,7 @@
 import os
 import secrets
 import json
+import time
 import requests
 import urllib.parse as encode
 from threading import Thread
@@ -50,7 +51,7 @@ def send_email(subject, sender, recipients, text_body, html_body):
 def send_password_reset_email(user):
     token = user.get_reset_password_token()
     send_email('Reset Your Password [Awesome Blog]',
-        sender=app.config['ADMINS'][0],
+        sender=app.config['MAIL_ADMIN'],
         recipients=[user.email],
         text_body=render_template('email/reset_password.txt', user=user, token=token),
         html_body=render_template('email/reset_password.html', user=user, token=token)
@@ -58,7 +59,7 @@ def send_password_reset_email(user):
 
 
 # Method for translation using Microsoft API
-def translate(text, source_language, dest_language):
+def translate_with_microsoft(text, source_language, dest_language):
     if 'MS_TRANSLATOR_KEY' not in app.config or not app.config['MS_TRANSLATOR_KEY']:
         return 'Error: the translation service is not configured.'
 
@@ -78,14 +79,50 @@ def translate(text, source_language, dest_language):
     return json.loads(response.content.decode('utf-8-sig'))
 
 
-# Method for translation using Microsoft API
-def translate_with_google(text, source_language, dest_language):
-    # Encode the text first to constructe the url with it 
-    encodedText = encode.quote(text)
+# Method for translation using Google API
+def translate_with_google(article, scr_lang, dest_lang):
+    # To know which API we are using now
+    # print('+++++ \n Using Google API for translation !! \n ++++++')   # For debugging, 
+    
+    # Because the free google API has a limited number of characters to translate, we have
+    # to split the article to sentences and translate each sentence on its own.
+    list_sentences = turn_to_list_sentences(article)
+    threads = [None] * len(list_sentences)
+    results = [None] * len(list_sentences)
+
+    translatedText = ''
+    for i in range(len(threads)):
+        threads[i] = Thread(target=translate_sentence, args=(list_sentences[i], scr_lang, dest_lang, results, i))
+        threads[i].start()
+        # time.sleep(1)     We could make the main thread sleep to give other threads time to finish.
+    
+    for i in range(len(threads)):
+        threads[i].join()
+
+    return " ".join(results)    # concatenate all translated sentences and return the result
+
+# Method that prepare the text for translation by encoding it and turn it to list of sentences
+def turn_to_list_sentences(text):
+
+    list_of_words = text.split()
+
+    # Turn the list of words to a list of sentences no longer than 30-35 characters 
+    list_of_sens = []
+    sen=''
+    for word in list_of_words:
+        sen = sen + ' ' + word
+        if len(sen) > 30 or word == list_of_words[-1]:
+            list_of_sens.append(sen)
+            sen = ''
+
+    return list_of_sens
+
+# Method for translation a single sentence using Google API
+def translate_sentence(sentence, src_lang, dest_lang, result, index):
 
     base_url = 'https://translate.googleapis.com'
     path = '/translate_a/single'
-    params = '?client=gtx&sl={}&tl={}&dt=t&q={}'.format(source_language, dest_language, encodedText)
+    params = '?client=gtx&sl={}&tl={}&dt=t&q={}'.format(src_lang, dest_lang, encode.quote(sentence))
     constructed_url = base_url + path + params
     # print('url ::  ' + constructed_url)
 
@@ -96,5 +133,17 @@ def translate_with_google(text, source_language, dest_language):
     jsonResponse = json.loads(response.content.decode('utf-8-sig'))
     # print(jsonResponse)
     translatedText = jsonResponse[0][0][0]
+    result[index] = translatedText
         
     return translatedText
+
+
+
+# Method for informing the admins about an error by sending emails to all of them 
+def tell_admin_with_error(subject, error):
+    send_email(subject=subject,
+            sender=app.config['MAIL_ADMIN'],
+            recipients=app.config['ADMINS'],
+            text_body=render_template('email/microsoft_translator_failure.txt', error=error),
+            html_body=render_template('email/microsoft_translator_failure.html', error=error)
+        )

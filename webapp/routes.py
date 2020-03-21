@@ -7,8 +7,12 @@ from guess_language import guess_language
 
 from webapp import app, db
 from webapp.models import User, Post
-from webapp.utils import store_image, send_password_reset_email, translate, translate_with_google
+from webapp.utils import store_image, send_password_reset_email, translate_with_microsoft, translate_with_google, tell_admin_with_error
 from webapp.forms import LoginForm, RegistrationForm, UpdateProfileForm, PostForm, ResetPasswordForm, ResetPasswordRequestForm
+
+
+# This flag is used to prevent sending too many emails when there is a problem with the translation API
+adminTold = False
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -232,9 +236,16 @@ def translate_text():
     source_language = request.form['source_language']
     dest_language = request.form['dest_language']
     
-    translatedText = translate(text, source_language, dest_language)
+    translatedText = translate_with_microsoft(text, source_language, dest_language)
     if 'ArgumentException' in translatedText or 'Exception' in translatedText:
+        if not adminTold:
+            tell_admin_with_error('Problem With Microsoft Translator API [Awesome Blog]', error=translatedText)
+            adminTold = True
+            # print("+++++ \n Problem With Microsoft API !! \n +++++")    # Used instead of sending email when debugging 
+
         # We could use translate_with_google if there is a problem with Microsoft API
         translatedText = translate_with_google(text, source_language, dest_language)
+    else:
+        adminTold = False   # Reset the status to Flase again when the API is working
     
     return jsonify({'text': translatedText})

@@ -1,0 +1,7 @@
+Hey Admin,
+
+There is a problem with the Microsoft Translator API !!
+
+The Error Description: {{ error }}
+
+Awesome Blog

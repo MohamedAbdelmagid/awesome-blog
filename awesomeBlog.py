@@ -1,5 +1,9 @@
 from webapp import app, db
 from webapp.models import User, Post
+from webapp.utils import translate_with_microsoft, translate_with_google, translate_sentence
+
+sentenceToTranslate = "Python is an interpreted, high-level, general-purpose programming language. Created by Guido van Rossum and first released in 1991, Python's design philosophy emphasizes code readability with its notable use of significant whitespace. Its language constructs and object-oriented approach aim to help programmers write clear, logical code for small and large-scale projects."
+
 
 
 users = User.query.all()
@@ -72,6 +76,10 @@ def make_shell_context():
         'deleteUsers': deleteUsers,
         'deletePost': deletePost,
         'deletePosts': deletePosts,
+        'soft': translate_with_microsoft,
+        'google': translate_with_google,
+        'tran': translate_sentence,
+        'sen': sentenceToTranslate
     }
 
 
