@@ -10,6 +10,8 @@ from flask_mail import Mail
 from flask_moment import Moment
 from flask_bootstrap import Bootstrap
 
+from elasticsearch import Elasticsearch
+
 from config import Config
 
 
@@ -39,6 +41,9 @@ def create_app(config_class=Config):
     mail.init_app(app)
     moment.init_app(app)
     bootstrap.init_app(app)
+
+    app.elasticsearch = Elasticsearch([app.config['ELASTICSEARCH_URL']]) \
+        if app.config['ELASTICSEARCH_URL'] else None
 
     from webapp.errors import errors_blueprint
     app.register_blueprint(errors_blueprint)

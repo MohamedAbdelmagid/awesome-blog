@@ -26,6 +26,8 @@ class Config(object):
 
     POSTS_PER_PAGE = 5
 
+    ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL')
+
 
 class ProductionConfig(Config):
     DEBUG = False
@@ -46,3 +48,4 @@ class DevelopmentConfig(Config):
 class TestingConfig(Config):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = 'sqlite://'
+    ELASTICSEARCH_URL = None

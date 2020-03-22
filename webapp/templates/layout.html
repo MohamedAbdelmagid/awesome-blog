@@ -36,7 +36,7 @@
 			<!-- Navbar Right Side -->
 			<div class="navbar-nav">
 				{% if current_user.is_anonymous %}
-					<a class="nav-item nav-link text-white" href="{{ url_for('auth.lgoin') }}">Login</a>
+					<a class="nav-item nav-link text-white" href="{{ url_for('auth.login') }}">Login</a>
 					<a class="nav-item nav-link text-white" href="{{ url_for('auth.register') }}">Register</a>
 				{% else %}
 					<a class="nav-item nav-link text-white" href="{{ url_for('main.account', username=current_user.username) }}">Profile</a>
@@ -71,9 +71,25 @@
 				{% block app_content %}
 				{% endblock %}
 			</div>
+
 			
 			<!-- Sidebar Widgets Column -->
 			<div class="col-md-4">
+
+				<!-- Search Widget -->
+				<div class="card my-4">
+					<h5 class="card-header">Search</h5>
+					{% if g.search_form %}
+					<div class="card-body">
+						<form class="navbar-form navbar-left" method="GET" action="{{ url_for('main.search') }}">
+							<div class="form-group">
+								{{ g.search_form.q(size=20, class='form-control', placeholder='Search..') }}
+							</div>
+						</form>
+					</div>
+					{% endif %}
+				</div>
+			
 				<!-- Side Widget For Advertisement-->
 				<div class="card my-4">
 					<h5 class="card-header">Advertisement</h5>

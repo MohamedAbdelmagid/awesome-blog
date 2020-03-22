@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from flask import render_template, flash, redirect, url_for, request, jsonify, current_app
+from flask import render_template, flash, redirect, url_for, request, jsonify, current_app, g
 from flask_login import current_user, login_required
 from guess_language import guess_language
 
@@ -9,7 +9,7 @@ from webapp.models import User, Post
 from webapp.utils import store_image, tell_admin_with_error
 from webapp.translation import translate_with_microsoft, translate_with_google
 from webapp.main import main_blueprint as main
-from webapp.main.forms import UpdateProfileForm, PostForm
+from webapp.main.forms import UpdateProfileForm, PostForm, SearchForm
 
 
 # This flag is used to prevent sending too many emails when there is a problem with the translation API
@@ -21,6 +21,7 @@ def before_request():
     if current_user.is_authenticated:
         current_user.last_seen = datetime.utcnow()
         db.session.commit()
+        g.search_form = SearchForm()
 
 
 @main.route('/', methods=['GET', 'POST'])
@@ -166,3 +167,23 @@ def translate_text():
         adminTold = False   # Reset the status to Flase again when the API is working
     
     return jsonify({'text': translatedText})
+
+
+@main.route('/search')
+@login_required
+def search():
+    if not g.search_form.validate():
+        return redirect(url_for('main.explore'))
+    
+    page = request.args.get('gage', 1, type=int)
+    search_results, total = Post.search(g.search_form.q.data, page, current_app.config['POSTS_PER_PAGE'])
+    posts = search_results.paginate(page, current_app.config['POSTS_PER_PAGE'], False)
+
+    next_url = url_for('main.search', page=posts.next_num) if posts.has_next else None
+    prev_url = url_for('main.search', page=posts.prev_num) if posts.has_prev else None
+
+    displayPagination = search_results.count() > current_app.config['POSTS_PER_PAGE']
+    print(displayPagination)
+
+    return render_template('search.html', title='Search Results', posts=posts.items, 
+            next_url=next_url, prev_url=prev_url, display=displayPagination)

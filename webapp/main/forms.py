@@ -1,3 +1,4 @@
+from flask import request
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from flask_login import current_user
@@ -33,3 +34,15 @@ class PostForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired(), Length(min=1, max=140)])
     content = TextAreaField('Content', validators=[DataRequired()])
     submit = SubmitField('Share')
+
+
+class SearchForm(FlaskForm):
+
+    q = StringField('Search', validators=[DataRequired()])
+
+    def __init__(self, *args, **kwargs):
+        if 'formdata' not in kwargs:
+            kwargs['formdata'] = request.args
+        if 'csrf_enabled' not in kwargs:
+            kwargs['csrf_enabled'] = False
+        super(SearchForm, self).__init__(*args, **kwargs)
