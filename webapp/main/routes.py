@@ -48,11 +48,12 @@ def home():
     next_url = url_for('main.home', page=posts.next_num) if posts.has_next else None
     prev_url = url_for('main.home', page=posts.prev_num) if posts.has_prev else None
 
-    displayPagination = followed_posts.count() > current_app.config['POSTS_PER_PAGE']
+    num_of_posts = followed_posts.count()
+    displayPagination = num_of_posts > current_app.config['POSTS_PER_PAGE']
 
     return render_template('home.html', title='Home', form=form,
                            posts=posts.items, next_url=next_url,
-                           prev_url=prev_url, display=displayPagination)
+                           prev_url=prev_url, num_of_posts=num_of_posts, display=displayPagination)
 
 @main.route('/explore')
 @login_required

@@ -40,6 +40,13 @@
     </form>
     {% endif %}
     
+    {% if num_of_posts == 0 %}
+    <div class="alert alert-info text-center" role="alert">
+        Here you will find articles published by people you follow. If you new to this blog you probably 
+        will not get articles here but, you could <a href="/explore" class="alert-link">find articles and publishers to follow here</a>.
+    </div>
+    {% endif %}
+    
     {% for post in posts %}
         {% include '_post.html' %}
     {% endfor %}

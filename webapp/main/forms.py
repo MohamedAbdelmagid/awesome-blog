@@ -33,7 +33,7 @@ class PostForm(FlaskForm):
 
     title = StringField('Title', validators=[DataRequired(), Length(min=1, max=140)])
     content = TextAreaField('Content', validators=[DataRequired()])
-    submit = SubmitField('Share')
+    submit = SubmitField('Publish')
 
 
 class SearchForm(FlaskForm):
