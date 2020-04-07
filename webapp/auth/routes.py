@@ -23,7 +23,7 @@ def register():
         db.session.commit()
 
         flash('Your account has been created! You are now able to log in', 'info')
-        return redirect(url_for('auth.lgoin'))
+        return redirect(url_for('auth.login'))
 
     return render_template('auth/register.html', title='Register', form=form)
 
@@ -46,7 +46,7 @@ def login():
             return redirect(next_page)
         else:
             flash('Invalid username or password !!' , 'danger')
-            return redirect(url_for('auth.lgoin'))
+            return redirect(url_for('auth.login'))
 
     return render_template('auth/login.html', title='Sign In', form=form)
 
@@ -73,7 +73,7 @@ def reset_password(token):
         db.session.commit()
         flash('Your password has been reset.')
 
-        return redirect(url_for('auth.lgoin'))
+        return redirect(url_for('auth.login'))
 
     return render_template('auth/reset_password.html', form=form)
 
@@ -88,7 +88,7 @@ def reset_password_request():
         if user:
             send_password_reset_email(user)
         flash('Check your email for the instructions to reset your password')
-        return redirect(url_for('auth.lgoin'))
+        return redirect(url_for('auth.login'))
         
     return render_template('auth/reset_password_request.html', title='Reset Password', form=form)
 

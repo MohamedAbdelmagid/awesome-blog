@@ -45,6 +45,10 @@ class SearchableMixin(object):
 
     @classmethod
     def reindex(cls):
+        if current_app.elasticsearch.indices.exists(cls.__tablename__):
+            current_app.elasticsearch.indices.delete(cls.__tablename__)
+
+        current_app.elasticsearch.indices.create(index=cls.__tablename__, ignore=400)
         for obj in cls.query:
             add_to_index(cls.__tablename__, obj)
 
