@@ -156,7 +156,7 @@ def translate_text():
     dest_language = request.form['dest_language']
     
     translatedText = translate_with_microsoft(text, source_language, dest_language)
-    if 'ArgumentException' in translatedText or 'Exception' in translatedText:
+    if 'Error:' in translatedText or 'Exception' in translatedText:
         if not adminTold:
             tell_admin_with_error('Problem With Microsoft Translator API [Awesome Blog]', error=translatedText)
             adminTold = True
@@ -168,7 +168,6 @@ def translate_text():
         adminTold = False   # Reset the status to Flase again when the API is working
     
     return jsonify({'text': translatedText})
-
 
 @main.route('/search')
 @login_required

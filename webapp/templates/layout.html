@@ -129,7 +129,11 @@
                 $(destElem).text(response['text'])
 
             }).fail(function() {
-                $(destElem).text("{{ 'Error: Could not contact server !!' }}");
+				$(destElem).html(`
+				<p class="card-text">
+					<div style='color: #D8000C;'><span>Error: Could not contact server! check your internet conection.</span></div>
+					<a href="javascript:translate('${sourceElem}', '${destElem}', '${sourceLang}', 'ar');">Try again</a>
+				</p>`);
             });
         }
     </script>	
