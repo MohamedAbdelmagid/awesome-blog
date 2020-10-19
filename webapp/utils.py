@@ -1,6 +1,7 @@
 import os
 import secrets
 from threading import Thread
+from datetime import datetime
 
 from PIL import Image
 from flask import render_template, current_app
@@ -51,3 +52,27 @@ def tell_admin_with_error(subject, error):
             text_body=render_template('email/microsoft_translator_failure.txt', error=error),
             html_body=render_template('email/microsoft_translator_failure.html', error=error)
         )
+
+# Method for converting the last_seen date to string time 
+def get_last_seen(last_seen):
+    now = datetime.utcnow()
+    diff = now - last_seen
+    seconds = diff.seconds
+    days = diff.days
+
+    if (days > 0):
+        if (days == 1):
+            return 'a day ago'
+        return str(days + 1) + ' days ago'
+    elif ((seconds > (60*60)) and (seconds < (60*60*24))):
+        if (seconds % (60*60) == 0):
+            return 'less than an hour ago'
+        return str(int(seconds / (60*60) + 1)) + ' hours ago'
+    elif ((seconds > 60) and (seconds < (60*60))):
+        if (seconds % 60) == 0:
+            return 'a minute ago'
+        return str(int(seconds / 60) + 1) + ' minutes ago'
+    elif ((seconds < 60) and (seconds > 5)):
+        return  'a minute ago'
+    else:
+        return 'online'

@@ -3,7 +3,10 @@
     <article class="media content-section border-0 mb-0">
         <img class="rounded-circle article-img" src="{{ url_for('static', filename='pics/' + post.author.image_file) }}">
         <div class="media-body">
-            <h2 class="article-title">{{ post.title }}</h2>
+            <h4 class="article-title">{{ post.title }}</h4>
+            <span class="popup">
+                <a href="/account/{{ post.author.username }}"> {{ post.author.username }}</a>
+            </span>
         </div>
     </article>
 
@@ -26,6 +29,8 @@
 
     <div class="card-footer text-muted">
         {{ moment(post.date_posted).fromNow() }} by
-        <a href="/account/{{ post.author.username }}"> {{ post.author.username }}</a>
+        <span class="popup">
+            <a href="/account/{{ post.author.username }}"> {{ post.author.username }}</a>
+        </span>
     </div>
 </div>

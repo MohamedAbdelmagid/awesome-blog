@@ -136,5 +136,44 @@
 				</p>`);
             });
         }
+
+		$(function () {
+			let timer = null;
+			let xhr = null;
+
+			$('.popup').hover(function(event) { // Mouse enter event handler
+				let spanElem = $(event.currentTarget);
+
+				timer = setTimeout(function() {
+					timer = null;
+					xhr = $.ajax('/account/' + spanElem.first().text().trim() + '/popup')
+						.done(function(content) {
+							xhr = null;
+							spanElem.popover({
+								trigger: 'manual',
+								html: true,
+								animation: false,
+								container: spanElem,
+								content: content
+							}).popover('show');
+							flask_moment_render_all();
+						});
+				}, 1000);
+			}, function(event) { // Mouse leave event handler
+				let spanElem = $(event.currentTarget);
+
+				if (timer) {
+					clearTimeout(timer);
+					timer = null;
+
+				} else if (xhr) {
+					xhr.abort();
+					xhr = null;
+
+				} else {
+					spanElem.popover('dispose');
+				}
+			});
+		});
     </script>	
 {% endblock %}

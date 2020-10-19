@@ -6,7 +6,7 @@ from guess_language import guess_language
 
 from webapp import db
 from webapp.models import User, Post
-from webapp.utils import store_image, tell_admin_with_error
+from webapp.utils import store_image, tell_admin_with_error, get_last_seen
 from webapp.translation import translate_with_microsoft, translate_with_google
 from webapp.main import main_blueprint as main
 from webapp.main.forms import UpdateProfileForm, PostForm, SearchForm
@@ -187,3 +187,12 @@ def search():
 
     return render_template('search.html', title='Search Results', posts=posts.items, 
             next_url=next_url, prev_url=prev_url, display=displayPagination)
+
+
+@main.route('/account/<string:username>/popup')
+@login_required
+def account_popup(username):
+   user = User.query.filter_by(username=username).first_or_404()
+   last_seen = get_last_seen(user.last_seen)
+
+   return render_template('account_popup.html', user=user, last_seen=last_seen)
