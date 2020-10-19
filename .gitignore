@@ -127,3 +127,4 @@ dmypy.json
 # My ignored files
 venv/
 webapp/templates/codes.html
+app.db

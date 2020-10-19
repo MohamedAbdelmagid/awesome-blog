@@ -19,7 +19,7 @@ def store_image(form_image):
     _, f_ext = os.path.splitext(form_image.filename)
     image_fn = random_hex + f_ext
     # Make a path to the static/pics directory
-    image_path = os.path.join(app.root_path, 'static/pics', image_fn)
+    image_path = os.path.join(current_app.root_path, 'static/pics', image_fn)
 
     # Resize the image before saving it
     output_size = (125, 125)

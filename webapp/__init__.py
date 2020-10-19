@@ -12,7 +12,7 @@ from flask_bootstrap import Bootstrap
 
 from elasticsearch import Elasticsearch
 
-from config import Config
+from config import *
 
 
 db = SQLAlchemy()

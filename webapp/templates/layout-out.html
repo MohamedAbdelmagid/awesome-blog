@@ -25,10 +25,22 @@
             <h3 id="header-title">Awesome Blog </h3>
         </div>
     </header>
+    
+    <div class="container-login-out">
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-info" role="alert" style="max-width: 450px;">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
 
     {# application content needs to be provided in the app_content block #}
 	{% block app_content %}
 	{% endblock %}
+    </div>
 
 	<!-- Bootstrap core JavaScript -->
 	<script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>

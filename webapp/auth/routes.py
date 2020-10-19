@@ -6,6 +6,7 @@ from flask_login import current_user, login_user, logout_user, login_required
 from webapp import db
 from webapp.models import User
 from webapp.auth import auth_blueprint as auth
+from webapp.auth.email import send_password_reset_email
 from webapp.auth.forms import LoginForm, RegistrationForm, ResetPasswordForm, ResetPasswordRequestForm
 
 

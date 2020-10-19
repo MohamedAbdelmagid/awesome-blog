@@ -34,6 +34,8 @@ class Config(object):
 class ProductionConfig(Config):
     DEBUG = False
 
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.db')
+
 
 class StagingConfig(Config):
     DEVELOPMENT = True
